@@ -1,0 +1,23 @@
+Standard:
+http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
+
+Categories:
+http://wiki.foresightlinux.org/display/DEV/Desktop+Entry+catagories
+
+---- example ----
+~/.local/share/applications/firefox.desktop
+[Desktop Entry]
+ Comment=Firefox Web Browser
+ Exec=firefox
+ GenericName=Web Browser
+ Icon=/opt/firefox/icons/mozicon128.png
+ Name=Firefox
+ Path=
+ StartupNotify=true
+ Terminal=0
+ TerminalOptions=
+ Type=Application
+ Categories=Network;Development
+ X-KDE-SubstituteUID=false
+ X-KDE-Username=
+

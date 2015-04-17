@@ -1,0 +1,42 @@
+package.txt
+Package Management
+
+========================================
+aptget
+
+$ man apt-get
+
+apt-get is the command-line tool for handling packages, and may be considered the user's "back-end" to other tools using the APT library. Several "front-end" interfaces exist, such as dselect(8), aptitude(8), synaptic(8), gnome-apt(1) and wajig(1).
+...
+
+========================================
+aptitude
+
+$ man aptitude
+
+aptitude is a text-based interface to the Debian GNU/Linux package system.
+It allows the user to view the list of packages and to perform package management tasks such as installing, upgrading, and removing packages.
+Actions may be performed from a visual interface or from the command-line.
+...
+
+========================================
+aptitude vs. apt-get:
+
+http://www.linuxquestions.org/questions/debian-26/apt-get-vs.-aptitude-363365/
+
+All three packages do the same bottom line, just in different ways with different options. I don't think one is better than the other, it is all personal preference. I have used apt from the beginning, and I love it. It is the most archaic, and doesn't automatically load dependencies like aptitude or synaptic, but it does list the dependencies which you can manually install if you wish. I have grown quite fond of apt, and studied the apt how-to constantly for the first month I was
+running Debian.
+
+No matter which package manager you wish to use, just keep one thing in mind, do not switch back and forth. The three P.M.'s do not keep track of each other; so if you use apt for the first 6 months, and then try aptitude, it will try uninstalling all of the packages you have installed over the previous 6 months. Many a poor soul has made the mistake thinking that aptitude knew what it was doing.
+
+Like I said, apt doesn't have all of the features that the other two have, but you do have the same capabilities. Apt will remove most dependencies if you remove with --purge. To keep dependencies clean, you have debfoster, deborphan, and autoclean. And to keep buggy packages from getting installed, you have apt-listbugs, and like Xian said, a system log is kept at /var/log/dpkg. The bottom line is to find one that works for you and have fun with it.
+
+One nice feature in aptitude: it keeps a log of its actions in /var/log/aptitude . Apt-get doesn't keep any log.
+
+A log of system package changes is kept in /var/log/dpkg. It is not provided by apt, but when apt installs, configures, removes, etc. any package it is recorded in that log in Debian.
+
+========================================
+KPackageKit
+
+这个 KDE 自带的包管理器，实在没什么可取之处。
+

@@ -1,0 +1,112 @@
+/* qindiff.css
+ * TODO:
+ *   -- Font family
+ */
+
+body {
+    font-family: Verdana, Arial, Sans-Serif;
+    font-size: 10pt;
+    background: #ffffff;
+    padding: 0px 0px 0px 0px;
+}
+
+input {
+    font-family:  Verdana, Arial, Sans-Serif;
+    font-size: 10pt;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+textarea {
+    font-family: DejaVu Sans Mono, Lucida Console, Serif, Monospace;
+    font-size: 10pt;
+    line-height: 20px;
+    background: #ffffff transparent;
+}
+
+.title {
+    font-family: Verdana, Arial, Sans-Serif;
+    font-size: 12pt;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 0px 10px 0px;
+}
+
+div .outputX {
+    border: 1px solid #dddddd;
+    float: left;
+    width: 48%;
+    height: auto;
+    overflow-x: scroll;
+    overflow-y: auto;
+    padding: 10px 5px 10px 5px;
+}
+
+div .outputY {
+    border: 1px solid #dddddd;
+    float: right;
+    width: 48%;
+    height: auto;
+    overflow-x: scroll;
+    overflow-y: auto;
+    padding: 10px 5px 10px 5px;
+}
+
+div .resultLine {
+    font-family: DejaVu Sans Mono, Lucida Console, Serif, Monospace;
+    white-space: nowrap;
+    line-height: 20px;
+}
+
+div .mark {
+    color: #00a0a0;
+}
+
+#toolbar {
+    top: 5px;
+    right: 10px;
+    border: #bbb 1px solid;
+    padding: 5px 5px 5px 5px;
+    z-index: 102;
+    position: fixed;
+    background: #ffffff; /* transparent; */
+}
+* html #toolbar {
+    margin-top: expression(20 - parseInt(this.offsetHeight / 2) + (TBWindowMargin = document.documentElement && document.documentElement.scrollTop || document.body.scrollTop) + 'px');
+    position: absolute;
+}
+
+#textDiv {
+    /*top: 5px; */
+    left: 5px;
+    right: 5px;
+    border: #ff3333 1px solid;
+    padding: 5px 5px 5px 5px;
+    z-index: 102;
+    position: fixed;
+    background: #ffffff transparent;
+    display: none;
+}
+
+* html #textDiv {
+    margin-top: expression(200 - parseInt(this.offsetHeight / 2) + (TBWindowMargin = document.documentElement && document.documentElement.scrollTop || document.body.scrollTop) + 'px');
+    position: absolute;
+}
+/*
+#textX {
+    color: #dddddd;
+    background: #333333;
+}
+#textY {
+    color: #dddddd;
+    background: #333333;
+}*/
+
+#hideText {
+    font-family: Verdana, Arial, Sans-Serif;
+    font-size: 10pt;
+    text-decoration: underline;
+    color: #ff3333;
+    margin-bottom: 10px;
+}
+

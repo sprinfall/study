@@ -1,0 +1,34 @@
+man.txt
+man 命令的使用
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+UBUNTU 缺省没装 man 2 & 3，所以不能查阅 system calls 和 library calls。你可以用这两条命令检查下：
+$ man 2 write
+$ man 3 printf
+
+安装 manpages-dev 解决问题：
+$ sudo apt-get install manpages-dev
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+在 vim 里敲 K 即可以查阅光标所在的函数的手册(:help K)。非常方便。
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+一般只需直接 man + 所查命令，但有相同命令时，man 出来的结果很可能不是想要的，可以先用 man
+-f 查询，然后用 man + 数字(section number) + 命令名查询。比如直接 man open
+出来的并不是 open() 函数的帮助。或者如果明知是想查函数，就直接用 man 2 or 3 + 函数名。
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Chinese man
+
+Install package manpages-zh.  After installed, there'll be extra man in
+/usr/share/man/zh_CN (& zh_TW).
+
+$ aptitude show manpages-zh
+	...
+	Chinese manual pages
+	This package contains the Chinese manual pages translated by the Chinese Man
+	Pages Project (CMPP).
+	Both zh_CN and zh_TW (Simplified and Traditional Chinese) versions are
+	provided.
+	Home: http://code.google.com/p/manpages-zh/
+

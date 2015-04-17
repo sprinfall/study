@@ -1,0 +1,7 @@
+
+========================================
+kate
+An advanced text editor for KDE.
+
+$ man kate
+

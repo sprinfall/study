@@ -1,0 +1,70 @@
+file.txt
+文件和目录相关的操作。
+
+file and directory (directory is just a special file) operations.
+
+========================================
+VIEW FILE
+
+----------------------------------------
+less
+less is a pagerprogram (换页程序) to view text in terminal.
+
+$ man less:
+
+less is a program similar to more, but which allows backward movement in the file as well as forward movement.  Also, less does not have to read the entire input file before starting, so with large input files it starts up faster than text editors like vi.
+
+Commands are based on both more and vi (意味着可以使用 e y C-d C-b 翻页, 遍历搜索结果可以用 n).  Commands may be preceded by a decimal number, called N in the descriptions below.  The number is used by some commands, as indicated.
+
+CONFIG:
+Add the following env LESS to shell rc:
+    export LESS='eMqgiJW'
+Type 'man less' or 'less --help' for details of the options.
+
+========================================
+SPACE USAGE
+
+$ du -h <file or dir>
+-h: human-readable, 1k, 3M, etc.
+
+========================================
+REMOVE
+
+----------------------------------------
+添加如下别名到.bashrc:
+alias rm='rm -i'
+删除时会要求确认. 此时如果不想提示确认, 在 rm 前加 \.
+
+----------------------------------------
+删除所有满足某个命名规则的文件或目录:
+sudo find / -name *centerim* -print0 | xargs -0 sudo rm -r
+
+========================================
+CREATE DIR
+
+$ mkdir -p ~/doc/{proj,music,video,words}
+逗号后好像不能有空格。
+
+========================================
+FIND FILES 
+
+----------------------------------------
+find
+Search for files in a directory hierarchy.
+
+TIPS:
+
+- Prefer print0 to print when use find with xargs:
+    $ find / -name xxx -print0 | xargs -0 ...
+Note the -0 option of xargs.
+
+- printf
+    $ find / -name xxx -printf "prefix%p\n"
+%p: the file path; %f: file name only...
+
+========================================
+FIND _IN_ FILES 
+
+----------------------------------------
+grep
+

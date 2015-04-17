@@ -1,0 +1,5 @@
+autostart.txt
+
+----------------------------------------
+Make a soft link of the program to be auto-started in ~/.kde/Autostart .
+$ ln -s /usr/share/bin/... ~/.kde/Autostart/...

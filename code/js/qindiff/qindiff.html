@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC
+"-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+Module: qindiff.html
+Author: Adam Gu <sprinfall@gmail.com>
+Last update: 2009-02-20
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Qin Diff</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="description" content="A diff utility, tagged along with merge function, based on LCS algorithm using Dynamic Programming"/>
+        <meta name="keywords" content="diff merge LCS algorithm Dynamic_programming javascript"/>
+        <link rel="stylesheet" type="text/css" href="qindiff.css" />
+        <script language="JavaScript" type="text/javascript" src="array.js"></script>
+        <script language="JavaScript" type="text/javascript" src="lcsubseq.js"></script>
+        <script language="JavaScript" type="text/javascript" src="qindiff.js"></script>
+    </head>
+    <body>
+        <div><span class="title">Qin</span>琴<span class="title"> Diff</span></div>
+        <div>&nbsp;</div>
+        <div id="outputDiv"></div>
+        <div id="textDiv">
+            <div style="text-align:right;" id="hideText" onclick="hideText()">× CLOSE</div>
+	    <textarea id="textX" style="overflow:scroll; width:49%; height:280px; float:left;">
+# burn_ape.sh - 转换 APE 到 WAV 并刻录成 CD
+# 需要以下软件：
+# mac: http://supermmx.org/linux/mac/
+# cuetools & cdrdao
+# 最好以 root 账号运行, 这样 cdrdao 就可以实时调度了
+
+# Help
+if [ -n $1 ] && [ "$1" = -h ]; then
+    echo -e "用法: ${0##*/} [文件名]\n参数可选，为不带后缀的 APE 和 CUE 文件名，假定它们文件名相同。"
+    exit 0
+
+fi
+</textarea>
+	    <textarea id="textY" style="overflow:scroll; width:49%; height:280px; float:right;">
+# burn_ape.sh - 转换 APE 到 WAV 并刻录成 CD
+
+# 需要以下软件：
+# mac: http://supermmx.org/linux/mac/
+# cuetools & cdrdao
+# 最好以 root 账号运行, 这样 cdrdao 就可以实时调度了
+
+# 帮助
+if [ -n $1 ] && [ "$1" = -h ]; then
+    echo -e "用法: ${0##*/} [文件名]\n参数可选，为不带后缀的 APE 和 CUE 文件名，假定它们文件名相同。"
+    exit 0
+fi
+
+</textarea>
+        </div>
+        <div id="toolbar">
+            <input id="textBtn" type="button" value="Text" onclick="showText()" />
+            <input id="diffBtn" type="button" value="Diff" onclick="startDiff()" />
+            <input id="ltrBtn" type="button" value=">" disabled="disabled" onclick="ltrMerge()" />
+            <input id="rtlBtn" type="button" value="<" disabled="disabled" onclick="rtlMerge()" />
+            <input id="ltrAllBtn" type="button" value=">>" disabled="disabled" onclick="ltrMergeAll()" />
+            <input id="rtlAllBtn" type="button" value="<<" disabled="disabled" onclick="rtlMergeAll()" />
+            <input id="undoBtn" type="button" value="Undo" disabled="disabled" onclick="undo()" />
+            <input id="redoBtn" type="button" value="Redo" disabled="disabled" onclick="redo()" />
+        </div>
+    </body>
+</html>
+

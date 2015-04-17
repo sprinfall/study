@@ -1,0 +1,17 @@
+
+========================================
+df
+
+Command line tool.
+Report file system disk space usage.
+
+========================================
+filelight
+
+Graphic disk usage information.
+
+========================================
+KDE partition manager
+
+$ apt-get install partitionmanager
+

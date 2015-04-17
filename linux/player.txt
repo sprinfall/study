@@ -1,0 +1,16 @@
+
+---- MOC ----
+
+Music On Console，顾名思义，在终端里运行的音乐播放器。遂比较简洁。
+其他特点诸如：退出client后server可在后台继续播放，不打扰用户在终端里继续其他操作；支持主题(色彩方案)；等等。
+
+Get:
+$ sudo apt-get install moc
+
+Run:
+$ mocp
+
+Config:
+~/.moc/config
+
+

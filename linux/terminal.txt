@@ -1,0 +1,32 @@
+
+========================================
+Concepts
+
+----------------------------------------
+Terminal
+
+http://en.wikipedia.org/wiki/Computer_terminal
+
+----------------------------------------
+Terminal Emulator
+
+http://en.wikipedia.org/wiki/Terminal_emulator
+一些常用的终端模拟程序：xterm, konsole, gnome terminal, etc.
+
+Learning the UNIX Operating System 这本小书末尾的词汇表对终端及终端模拟程序也有很清晰的介绍。
+
+========================================
+Use vi editing mode in terminal
+
+Add the following to ~/.inputrc:
+	set editing-mode vi
+	set keymap vi
+
+.inputrc is the startup file for readline, which is the command-line editing
+interface of bash.
+
+For bash, one can also use 'set -o vi'. E.g., add 'set -o vi' to .bashrc.
+
+[http://vim.wikia.com/wiki/Use_vi_shortcuts_in_terminal]
+To summarize: As I understand, setting file ~/.inputrc or /etc/inputrc will set vi mode to all programs that use 'readline' library. From what i know it's bash, pgsql, mysql, ... + I like to use Term::ReadLine module in perl and therefore vi mode works right a way for all of my programs. Setting up 'set -o vi' in ~/.bashrc will set it only for bash (the same goes for ksh and zsh setting i guess). 
+

@@ -1,0 +1,6 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ImageMagick
+
+convert: convert from one type of image to another type
+

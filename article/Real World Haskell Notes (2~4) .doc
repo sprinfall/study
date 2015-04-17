@@ -1,0 +1,454 @@
+<html>
+    <head>
+        <!-- MS Word on Windows doesn't realise the encoding is UTF-8 unless this meta tag is present -->
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <base href="http://cs-rnd.carestreamhealth.com/confluence" />
+        <title>Real World Haskell 笔记（2~4章） </title>
+        <style>
+            body, p, td, table, tr, .bodytext, .stepfield {
+	            font-family: Verdana, arial, sans-serif;
+            }
+            .panel {
+                margin: 10px;
+                padding: 10px;
+                border: 1px solid #999;
+                background-color: #f0f0f0;
+            }
+            .noteMacro { border-style: solid; border-width: 1px; border-color: #F0C000; background-color: #FFFFCE; text-align:left;}
+            .warningMacro { border-style: solid; border-width: 1px; border-color: #c00; background-color: #fcc; text-align:left;}
+            .infoMacro { border-style: solid; border-width: 1px; border-color: #3c78b5; background-color: #D8E4F1; text-align:left;}
+            .tipMacro { border-style: solid; border-width: 1px; border-color: #090; background-color: #dfd; text-align:left;}
+            .informationMacroPadding { padding: 5px 0 0 5px; }
+
+            table.infoMacro td, table.warningMacro td, table.tipMacro td, table.noteMacro td, table.sectionMacro td {
+                border: none;
+            }
+
+            .grid {
+                margin: 2px 0px 5px 0px;
+                border-collapse: collapse;
+            }
+            .grid th  {
+                border: 1px solid #ccc;
+                padding: 2px 4px 2px 4px;
+                background: #f0f0f0;
+                text-align: center;
+            }
+            .grid td  {
+                border: 1px solid #ccc;
+                padding: 3px 4px 3px 4px;
+            }            
+        </style>
+    </head>
+
+    <body style="background-color: white; padding: 10px;">
+        <h1>Real World Haskell 笔记（2~4章） </h1>
+        <p><a href="http://book.douban.com/subject/3134515/">Real World Haskell</a> 是一本关于函数式语言Haskell的入门书籍，其 <a href="http://book.realworldhaskell.org/read/">在线版</a> 评论相当热烈，是读纸质的图书所体会不到的。这里的笔记涵盖 2 ~ 4 章，描述了这门语言和函数式编程的基础。</p>
+
+<p><font color="red">最后更新：2010-12-31</font></p>
+
+<hr />
+<p><b><a href="http://book.realworldhaskell.org/read/types-and-functions.html" title="read the book">Real World Haskell, Ch2 - Types and Functions</a></b></p>
+
+<p><b>&#124; Variables &#124;</b></p>
+
+<p>有人就 Haskell 的 variables 评论说：</p>
+
+<p>Variables don't; constants aren't.</p>
+
+<p>In the mathematical equation "x^2 + x = 20", the variable x does not "vary" arbitrarily, in the sense of a "variable" in C or Python. x has a value: the set of numbers for which the equation is satisfied, namely {4, &#45;5}.</p>
+
+<p>Haskell variables are more like math variables and less like C variables.</p>
+
+<p>One man's constant is another man's variable (Alan Perlis。一人之常量，他人之变量)。说 Haskell 的 variables 较之于 C 更像是数学中的 variables，其实也不尽然，毕竟方程 "x^2 + x = 20" 不过是 "x^2 + x = y" 的一个特例。</p>
+
+<p><b>&#124; if...else...表达式 &#124;</b></p>
+
+<p>Recall that Haskell is an <ins>expression-oriented</ins> language (面向表达的语言). In an imperative language (命令式语言, C, Java, Python 之流), it can make sense to omit the else branch from an if, because we're working with statements (语句), not expressions. However, when we're working with expressions, an if that was missing an else wouldn't have a result or type if the predicate  evaluated to False, so it would be nonsensical.</p>
+
+<p>对于函数式语言，"程序员应该确定计算什么，而不是如何计算，在何处计算及何时计算。因而函数式语言没有规定计算如何从一条语句到另一条语句的";"运算符、for循环或者其他语句。尤其是，有些根本就没有语句。"------《现代编译程序设计》</p>
+
+<p><b>&#124; &#124;&#124; 不过是一个函数 &#124;</b></p>
+
+<p>可能的定义：<br/>
+(&#124;&#124;) a b = if a then a else b</p>
+
+<p><b>&#124; Lazy Evaluation 惰性求值 &#124;</b></p>
+
+<p>The record that we use to track an unevaluated expression is referred to as a <b>thunk</b>. This is all that happens: we create a thunk, and defer the actual evaluation until it's really needed. If the result of this expression is never subsequently used, we will not compute its value at all.</p>
+
+<p>这个 thunk 比较难理解。查词典得解释如下：替换程式；转换层，形实转换程序。</p>
+
+<p><b>&#124; Polymorphism 多态 &#124;</b></p>
+
+<p><b>Parametric polymorphism</b>（参量多态）是 Haskell 最常见的一种多态。据说 Haskell 的 Parametric Polymorphism 直接影响了 Java 和 C# 里的泛型设施（generic facilities）。Haskell 里的 parameterised type 类似于 Java generics 里的 type variable。C+&#43; templates 与 parametric polymorphism 也有一些相像。</p>
+
+<p>Herb Sutter has given excellent discussions of the differing natures of generics in .NET languages, Java, and templates in C++.</p>
+
+<p>I'd say C# Generics is much closer to Haskell's type polymorphism than C+&#43; Templates. C+&#43; Templates are like glorified C macros; C+&#43; templates are type-unsafe by themselves (you can't guarantee that a template will compile successfully for any given concrete type without actually instantiating it for that type), and they produce a separate "instantiation" for each concrete type. In contrast, C# generic classes are compiled only once, producing only one compiled implementation. Haskell probably has the same properties.</p>
+
+<p>C# 的泛型较 C+&#43; 的 Templates 更接近 Haskell 的多态，这一点我比较同意。C+&#43; Templates 就像是美其名曰的 macros，见解独特，虽然偏激但不无道理。C+&#43; templates 就其自身而言是 type-unsafe 的，我们最初接触 C+&#43; Template 时总是被告诫：template 于 macro 的优点之一就是它的 type-safe，这下看来它也不是绝对 type-safe。</p>
+
+<p>Google TechTalk 有关 parametric polymorphism 的一个视频： <a href="http://video.google.com/videoplay?docid=-4851250372422374791&ei=T25kSdm7BIOorwKv76n3Cw&q=%22Parametric+polymorphism%22&hl=zh-CN">&#104;ttp://video.google.com/videoplay?docid=-4851250372422374791&amp;ei=T25kSdm7BIOorwKv76n3Cw&amp;q=%22Parametric+polymorphism%22&amp;hl=zh-CN</a></p>
+
+<p>C+&#43; Java 这些 OO 语言中的 <b>Subtype polymorphism</b>（即 is-a 关系）在 Haskell 中没有提供，因为它不是 OO 语言。</p>
+
+<p>诸如从 int 隐式转换为 float 这种一般语言都会提供的特性，Haskell 却不予容许，并且名之为&nbsp;<b>Coercion polymorphism</b>&nbsp;(强迫性多态)。</p>
+
+<hr />
+<p><b><a href="http://book.realworldhaskell.org/read/defining-types-streamlining-functions.html" title="read the book">Real World Haskell, Ch3 - Defining Types, Streamlining Functions</a></b></p>
+
+<p><b>&#124; Type Synonym 同义类型 &#124;</b></p>
+
+<p>跟 C/C+&#43; 里的 typedef 类似。比如：</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">type UserId = Int
+type UserName = <span class="code-object">String</span>
+type UserInfo = (UserId, UserName)
+...</pre>
+</div></div>
+<p>值得一提的是，String 其实就是 [Char] 的同义类型。</p>
+
+<p><b>&#124; 何时使用 Tuple, 何时使用 Data type? &#124;</b></p>
+
+<p>There is no hard and fast rule for deciding when it's better to use a tuple or a distinct data type, but here's a rule of thumb to follow. If you're using compound values widely in your code (as almost all non-trivial programs do), adding data declarations will benefit you in both type safety and readability. For smaller, localised uses, a tuple is usually fine.</p>
+
+<p>Bryn Keller 2008-01-26:</p>
+
+<p>This is diplomatic, but maybe should worded more strongly. In almost all cases (aside from things like Prelude.lookup perhaps), tuples should not be part of the public interface to a module. It exposes implementation details and makes it harder to evolve the module without breaking client code. It's also more prone to errors as you mention. Tuples should really only be used within a module, preferably within a function. YMMV (Your mileage may vary, 你的历程可能有所不同), of course...</p>
+
+<p><b>&#124; 用 Algebraic Data Type 模仿其他语言中的 enum &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">data Color = Red
+    | Yellow
+    | Blue
+    deriving (Eq, Show)</pre>
+</div></div>
+<p>虽然 Red 等都是 type-safe 的，但是仍然不能同时再定义一个如下的 "enum" (Blue 会有冲突):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">data Emotion = Blue
+    | Happy
+    deriving (Eq, Show)</pre>
+</div></div>
+<p>C+&#43; 里可以把 enum 放在 class 或 namespace 里以避免冲突，Haskell 咋办？</p>
+
+<p><b>&#124; Parametrised Types &#124;</b></p>
+
+<p>上一章提到 Parametric Polymorphism，说的应该大致是同一件事。<br/>
+很多人埋怨那个 Maybe（Prelude 里已经定义）的例子 confusing。有个叫 Pramode 的人给了如下这个例子就容易理解多了：</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">data Complex t = Complex {
+    real :: t,
+    imaginary :: t
+    } deriving Show
+c1 = Complex 10 20
+c2 = Complex 1.1 2.2</pre>
+</div></div>
+<p>跟 C+&#43; 里的 template 类似：</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">template &lt;typename T&gt;
+struct Complex {
+    T real;
+    T imaginary;
+};</pre>
+</div></div>
+<p>这种类比虽然肤浅 (shallow) 但是比较易于理解。</p>
+
+<p><b>&#124; error &#124;</b></p>
+
+<p>error 就像 C 里的 exit。我们很少在一个 non-trivial C program 里使用 exit，所以 Haskell 里的 error 一般也用不到。</p>
+
+<p><b>&#124; 通配符 '_' &#124;</b></p>
+
+<p>关于如下取 list 第二个元素的函数：</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">tidySecond :: [a] -&gt; Maybe a
+tidySecond (_:x:_) = Just x
+tidySecond _       = Nothing</pre>
+</div></div>
+<p>Jleino 说这里的 wild card '_' 让他很费解：<br/>
+Noob here again: (&#95;:x:&#95;) confuses me. Clearly the first _ matches the first element and the latter _ rest of the list i.e. the latter underscore represents one or more elements in a list. =&gt; An underscore can represent one or more elements in a list. =&gt; Why it is set that the first underscore does not represent /more/ elements, just one?<br/>
+我回复 Jleino 道：<br/>
+Since (1:2:3:[]) is the simplified version of (1:&#40; 2:&#40; 3:[]))), (&#95;:x:&#95;) is actually (&#95;:(x:&#95;)), where the first _ represents an actual element, while the second _ should be a list of elements with [] at its tail, and it of course could be just an empty list []. Just as Matthias explained, "The second underscore in (&#95;:x:&#95;) is the list's tail, so it can be the empty list."</p>
+
+<p><b>&#124; let &amp; where &#124;</b></p>
+
+<p>let 和 where 都可用来引入 local variables，但有区别如下：</p>
+
+<p>Micah Cowan, 2008-09-22:<br/>
+Note that "let" is an expression; it can occur anywhere an expression can occur. "where" is only allowed at the end of a function(/variable) or pattern binding (it also occurs in module, class, and instance declarations). "let" gives you a little more freedom in restricting the scope of the names you bind, since you can use let deep within an expression, whereas you can't do that with "where".<br/>
+I think it'd be worth summarizing this in the text here (at least to mention that "where" applies to function bodies, whereas "let" can apply to any expression (and is itself an expression).</p>
+
+<p><b>&#124; Local Functions &#124;</b></p>
+
+<p>LISP supports local functions, too. For me, it is one of the most valuable features, because it helps for avoid polluting the global scope with trivial used-only-once functions.</p>
+
+<p><b>&#124; if else 和 case 之区别 &#124;</b></p>
+
+<p>It's worth noting that there is a fundamental difference between if-expressions and case-expressions. if-expressions, and guards, only check to see if a boolean expression evaluated to True. case-expressions, and multiple equations for the same function, pattern match against the input. Make sure you understand this important distinction.<br/>
+if-expressions 和 guards 只是检查布尔表达式是否为 True，case-expressions 和 multiple equations 对输入进行模式匹配。</p>
+
+<p><b>&#124; myDrop 三种 &#124;</b><br/>
+drop: remove the first n elements from a list.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">myDrop0 n xs = <span class="code-keyword">if</span> n &lt;= 0 || <span class="code-keyword">null</span> xs
+    then xs
+    <span class="code-keyword">else</span> myDrop0 (n-1) (tail xs)
+
+myDrop1 n xs
+    | <span class="code-keyword">null</span> xs = []
+    | n &lt;= 0 = xs
+    | otherwise = myDrop1 (n-1) (tail xs)
+
+myDrop2 n xs | n &lt;= 0 = xs
+myDrop2 _ [] = []
+myDrop2 n (_:xs) = myDrop2 (n-1) xs</pre>
+</div></div>
+<p><b>&#124; 习题 No.3 &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">-- 3. Write a function that computes the mean of a list, i.e. the sum of all
+-- elements in the list divided by its length.
+
+listMean0 [] = 0
+listMean0 xs =
+    (listSum xs) / (fromIntegral (length xs))
+    where
+        listSum [] = 0
+        listSum (x:xs2) = x + (listSum xs2)
+
+listMean1 xs
+    | <span class="code-keyword">null</span> xs = 0
+    | otherwise = (listSum xs) / (fromIntegral (length xs))
+    where
+        listSum xs2
+            | <span class="code-keyword">null</span> xs2 = 0
+            | otherwise = (head xs2) + (listSum (tail xs2))</pre>
+</div></div>
+
+<hr />
+<p><b><a href="http://book.realworldhaskell.org/read/functional-programming.html" title="read the book">Real World Haskell, Ch4 - Functional programming</a></b></p>
+
+<p><b>&#124; Infix functions &#124;</b></p>
+
+<p>I don't think such a "syntactic convenience" is actually convenient since two extra backtick characters ('`') have to be typed.<br/>
+所以有人建议用 syntactic sugar（语法的糖衣），觉得比较好。</p>
+
+<p><b>&#124; Partial and total functions &#124;</b></p>
+
+<p>完全与否针对函数之于输入域的行为而言。Partial function: 不完全函数？</p>
+
+<p><b>&#124; zip &#124;</b></p>
+
+<p>zip [1,2,3] "abcd" =&gt; [(1,'a'),(2,'b'),(3,'c')]<br/>
+zip 本意拉链，很形象。Python 里也用 zip 表达相似的功能。</p>
+
+<p><b>&#124; map &#124;</b></p>
+
+<p>求 [[a]] 里长度最大的 list 有多长：maxlen = last (Data.List.sort (map length xs))<br/>
+Python 里也用 map 表达相似的功能。 map(len,[[1,2],[1,2,3]]) -&gt; [2,3]</p>
+
+<p><b>&#124; Transpose &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">-- Exercise 4: Write a program that transposes the text in a file.
+-- For instance, it should convert <span class="code-quote">"hello\nworld\n"</span> to <span class="code-quote">"hw\neo\nlr\nll\nod\n"</span>.
+
+-- by Yann Vernier
+myTranspose :: [[a]] -&gt; [[a]]
+myTranspose xs
+    | <span class="code-keyword">null</span> xs = []
+    | any <span class="code-keyword">null</span> xs = []
+    | otherwise = (map head xs):myTranspose (map tail xs)
+
+{-
+Why not from <span class="code-quote">"say\nhello\n to\nworld!\n"</span> to <span class="code-quote">"sh w\naeto\nylor\n l l\n o d\n !\n"</span> so I can get:
+sh w
+aeto
+ylor
+l l
+o d
+!
+?
+-}
+
+myTranspose :: [[a]] -&gt; a -&gt; [[a]]
+myTranspose xs fill
+    | <span class="code-keyword">null</span> xs = []
+    | all <span class="code-keyword">null</span> xs = []
+    | otherwise = (map myHead xs):myTranspose (map myTail xs) fill
+    where myHead xs | <span class="code-keyword">null</span> xs = fill | otherwise = head xs
+          myTail xs | <span class="code-keyword">null</span> xs = [] | otherwise = tail xs
+
+main = <span class="code-keyword">do</span>
+    print (unlines (myTranspose (lines txt) ' '))
+    where txt = <span class="code-quote">"say\nhello\n to\nworld!\n"</span></pre>
+</div></div>
+
+<p><b>&#124; 关于 higher-order function &#124;</b> 需要理解 first-class function.</p>
+
+<p><b>&#124; 如下 foldr 的定义是尾递归的吗？ &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">foldr :: (a -&gt; b -&gt; b) -&gt; b -&gt; [a] -&gt; b
+foldr step zero (x:xs) = step x (foldr step zero xs)
+foldr _ zero [] = zero</pre>
+</div></div>
+<p>I asked: "I doubt this foldr definition is not tail recursive."</p>
+
+<p><b>Vineet Kumar, 2009-03-12:</b><br/>
+@Adam: it's not tail-recursive, since the return value of the recursive call is used in feeding into another function call, namely step.<br/>
+Notice that the zero here is only used at the very end of the evaluation. Contrast this to foldl, where the value passed to each recursive call is accumulated.<br/>
+Looking at how the parentheses nest in the expansion below should make this clear: this clearly needs an additional stack frame for each nested call.</p>
+
+<p><b>&#124; Implement filter with foldr &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">filter p xs = foldr step [] xs
+    where step x ys | p x = x : ys
+                    | otherwise = ys</pre>
+</div></div>
+
+<p><b>&#124; foldr 较 foldl 更有用，也许正是因为 foldr 与 list 在结构上的相似 &#124;</b></p>
+
+<p><b>&#124; C++ 里的 foldl &amp; foldr &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">std::accumulate(begin, end, initval, func)
+std::accumulate(rbegin, rend, initval, func)</pre>
+</div></div>
+
+<p><b>&#124; Implement ++ with foldr &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">append :: [a] -&gt; [a] -&gt; [a]
+append xs ys = foldr (:) ys xs</pre>
+</div></div>
+
+<p><b>Vineet Kumar, 2009-03-12:</b><br/>
+Providing an expansion for this example may help here:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">append [1,2,3] [4,5,6]
+== foldr (:) [1,2,3] [4,5,6]
+== 1 : (foldr (:) [2,3] [4,5,6]
+== 1 : (2 : (foldr (:) [3] [4,5,6]))
+== 1 : (2 : (3 : (foldr (:) [] [4,5,6])))
+== 1 : (2 : (3 : [4,5,6])
+== [1,2,3,4,5,6]</pre>
+</div></div>
+
+<p><b>&#124; Implement concat with foldr &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">myConcat :: [[a]] -&gt; [a]
+myConcat xs = foldr (++) [] xs</pre>
+</div></div>
+
+<p><b>&#124; Evaluation order considerations &#124;</b></p>
+
+<p><a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function">&#104;ttp://en.wikipedia.org/wiki/Fold_(higher-order_function</a>)</p>
+
+<p><b>Evaluation order considerations</b></p>
+
+<p>In the presence of lazy, or normal-order evaluation, foldr will immediately return the application of f to the recursive case of folding over the rest of the list. Thus, if f is able to produce some part of its result without reference to the recursive case, and the rest of the result is never demanded, then the recursion will stop. This allows right folds to operate on infinite lists. By contrast, foldl will immediately call itself with new parameters until it reaches the end of the list. This tail recursion can be efficiently compiled as a loop, but can't deal with infinite lists at all — it will recurse forever in an infinite loop.</p>
+
+<p>我所能想到的 lazy evaluation 的例子：foldr (&#124;&#124;) False [True, False, True, False, ...]</p>
+
+<p>Reversing a list is also tail-recursive. (It can be implemented using rev = foldl (\ys x -&gt; x : ys) [].) On finite lists, that means that left-fold and reverse can be composed to perform a right fold in a tail-recursive way (with a modification to the function f so it reverses the order of its arguments).</p>
+
+<p>Another technical point to be aware of in the case of left folds using lazy evaluation is that the new initial parameter is not being evaluated before the recursive call is made. This can lead to stack overflows when one reaches the end of the list and tries to evaluate the resulting potentially gigantic expression. For this reason, such languages often provide a stricter variant of left folding which forces the evaluation of the initial parameter before making the recursive call, in Haskell, this is the foldl' (note the apostrophe, pronounced 'prime') function in the Data.List library. Combined with the speed of tail recursion, such folds are very efficient when lazy evaluation of the final result is impossible or undesirable.</p>
+
+<p><b>&#124; foldl vs. foldr &#124;</b></p>
+
+<p><b>Andrey Zaitsev, 2008-11-15:</b></p>
+
+<p>foldr is not better at all. This paragraph says that thunking of foldl is unexpected behavior, because it should be executed in constant space (when tail recursion optimization is on). Foldr on the other hand will be executed in varying space by definition, even in strict languages, because it's not tail recursive.</p>
+
+<p>So the point is that if you want to use benefits of tail recursion you should use the strict version of foldl which is Data.List.foldl', if not (or if there is no obvious way to define a tail recursive expression) there is no difference between foldr and foldl in terms of efficiency.</p>
+
+<p>More interesting thing is that foldl will create large thunk with expression of a kind like mentioned in the book in the moment when we need the result of fold (for example when we pass foldl blah-blah as an argument to putStr), and foldl wont even be expanded until its value is needed.</p>
+
+<p><b>&#124; foldl vs. Data.List.foldl' &#124;</b></p>
+
+<p>Why isn't foldl' the default?<br/>
+See <a href="http://www.haskell.org/haskellwiki/Stack_overflow">&#104;ttp://www.haskell.org/haskellwiki/Stack_overflow</a></p>
+
+<p><b>&#124; lambda functions &#124;</b><br/>
+Be careful in how you use patterns when defining a lambda function; make sure your patterns can't fail<br/>
+Lambda makes the code a little more difficult to read. (代码可读性下降)<br/>
+那种"只是想在定义函数时少敲几个字符而使用 lambda"的方式应该避免<br/>
+较之 lambda 和 explicit function definition，可以考虑使用 partially applied function</p>
+
+<p><b>&#124; function argument &#124;</b></p>
+
+<p>In Haskell, all functions take only one argument.</p>
+
+<p><b>Yann Vernier:</b><br/>
+An a-&gt;b-&gt;c is indeed a function, of the type a to b-&gt;c (a lower order function). This is why the type of a function taking another function as argument requires parenthesis, such as map :: (a-&gt;b) -&gt; a -&gt; b, the function to apply a transformation on items within a list.</p>
+
+<p>例子：</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">:type dropWhile isSpace
+=&gt; dropWhile isSpace :: [Char] -&gt; [Char]
+=&gt; The value dropWhile isSpace is a function that strips leading white space from a string.
+
+map (dropWhile isSpace) [<span class="code-quote">" a"</span>,<span class="code-quote">"f"</span>,<span class="code-quote">" e"</span>]</pre>
+</div></div>
+
+<p><b>&#124; Partial function application and currying &#124;</b></p>
+
+<p>Partial function application might remind C++ programmer of template partial specialization.</p>
+
+<p>Currying:<br/>
+See <a href="http://en.wikipedia.org/wiki/Currying">&#104;ttp://en.wikipedia.org/wiki/Currying</a><br/>
+Partial function application is called currying after Haskell Curry (and ignoring the original inventors Schönfinkel and Frege).</p>
+
+<p>Partial function application lets us avoid writing tiresome throwaway functions. It's often more useful for this purpose than the anonymous functions.</p>
+
+<p>Comments:<br/>
+Currying is the process of transforming a function that takes several arguments to a chain of functions, each taking only one argument.</p>
+
+<p>An example of currying:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">niceSum :: [<span class="code-object">Integer</span>] -&gt; <span class="code-object">Integer</span>
+niceSum xs = foldl (+) 0 xs
+
+nicerSum :: [<span class="code-object">Integer</span>] -&gt; <span class="code-object">Integer</span>
+nicerSum = foldl (+) 0</pre>
+</div></div>
+
+<p><b>&#124; Sections &#124;</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">ghci&gt; (1+) 2
+3
+ghci&gt; map (*3) [24,36]
+[72,108]
+ghci&gt; map (2^) [3,5,7,9]
+[8,32,128,512]</pre>
+</div></div>
+
+<p><b>&#124; As-pattern &#124;</b></p>
+
+<p>The pattern xs@(_:xs') is called an as-pattern, and it means "bind the variable xs to the value that matches the right side of the @ symbol".</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">suffixes :: [a] -&gt; [[a]]
+suffixes xs@(_:xs') = xs : suffixes xs'
+suffixes _ = []</pre>
+</div></div>
+<p>No as-pattern:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">suff [] = []
+suff xs = xs : suff (tail xs)</pre>
+</div></div>
+<p>or:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">noAsPattern :: [a] -&gt; [[a]]
+noAsPattern (x:xs) = (x:xs) : noAsPattern xs
+noAsPattern _ = []</pre>
+</div></div>
+
+<p><b>&#124; Composition &#124;</b><br/>
+The (.) operator isn't a special piece of language syntax; it's just a normal operator.<br/>
+The (.) function is right associative.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">suffixes5 = init . tails</pre>
+</div></div>
+
+<p><b>&#124; Tips for writing readable code &#124;</b><br/>
+As a general rule, don't use a fold if you can compose some library functions, but otherwise try to use a fold in preference to a hand-rolled a tail recursive loop.<br/>
+As for anonymous functions, they tend to interrupt the "flow" of reading a piece of code.</p>
+    </body>
+</html>

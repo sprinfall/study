@@ -1,0 +1,98 @@
+用ActiveObject实现Replay
+ 
+Active Object可以说是Command的变种或延伸，请参见Bob大叔的《敏捷软件开发》。
+ 
+我打算用它来实现replay，不知道现实中的可行性有多大。想法是这样的，比如在Warcraft里，你能看到Gruby或Sky的录像，就是一种游戏过程的replay。录像文件都很小，记录的应该仅仅是一些动作和动作的时间（只是猜测没有研究），那么replay的时候只要在确定的时间重做确定的动作，就可以了。这些动作被封装为command，时间上的裁决，呶，你看到了，在这里是由class SleepCmd来搞定的。
+ 
+THE CODE
+ 
+#include <string>
+#include <ctime>
+#include <list>
+#include <iostream>
+ 
+class Cmd {
+public:
+    Cmd() {};
+    virtual ~Cmd() {};
+    virtual void exec() = 0;
+};
+ 
+class Replayer {
+public:
+    Replayer() {}
+    void addCmd(Cmd* cmd) {
+        cmds_.push_back(cmd);
+    }
+    void run() {
+        while (! cmds_.empty()) {
+            Cmd* cmd = cmds_.front();
+            cmds_.pop_front();
+            cmd->exec();
+        }
+    }
+private:
+    std::list<Cmd*> cmds_;
+};
+ 
+class WakeupCmd : public Cmd {
+public:
+    virtual void exec() {}
+};
+ 
+class CopyCmd : public WakeupCmd {
+public:
+    virtual void exec() {
+        std::cout << "Copy Cmd.\n";
+    }
+};
+ 
+class MoveCmd : public WakeupCmd {
+public:
+    virtual void exec() {
+        std::cout << "Move Cmd.\n";
+    }
+};
+ 
+class SleepCmd : public Cmd
+{
+public:
+    SleepCmd(long sleepTime, Replayer& replayer, Cmd& warkupCmd)
+        : isStarted_(false), sleepTime_(sleepTime), replayer_(replayer),
+        warkupCmd_(warkupCmd) {
+    }
+    virtual void exec() {
+        clock_t time = clock();
+        if (!isStarted_) {
+            isStarted_ = true;
+            startTime_ = time;
+            replayer_.addCmd(this);
+        }
+        else if ((time - startTime_) < sleepTime_) {
+            replayer_.addCmd(this);
+        }
+        else {
+            replayer_.addCmd(&warkupCmd_);
+        }
+    }
+private:
+    bool isStarted_;
+    long sleepTime_, startTime_;
+    Cmd& warkupCmd_;
+    Replayer& replayer_;
+};
+ 
+int main()
+{
+    Replayer replayer;
+    CopyCmd copy;
+    MoveCmd move1, move2;
+    SleepCmd sleep1(1000, replayer, copy);
+    SleepCmd sleep2(2000, replayer, move1);
+    SleepCmd sleep3(6000, replayer, move2);
+    replayer.addCmd(&sleep1);
+    replayer.addCmd(&sleep2);
+    replayer.addCmd(&sleep3);
+    replayer.run();
+}
+
