@@ -1,0 +1,12 @@
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	his = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+	his1d = log --pretty=format:'%h %ad | %s%d [%an]' --graph --since='one day ago'
+	his2d = log --pretty=format:'%h %ad | %s%d [%an]' --graph --since='two days ago'
+	his1w = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short --since='one week ago'
+	his1m = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short --since='one month ago'
+	type = cat-file -t
+	dump = cat-file -p
