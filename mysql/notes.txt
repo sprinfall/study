@@ -1,0 +1,22 @@
+
+====================
+*local-infile*
+
+From the MySQL 5.5 manual page:
+
+    LOCAL works only if your server and your client both have been configured to permit it. For example, if mysqld was started with --local-infile=0, LOCAL does not work. See Section 6.1.6, “Security Issues with LOAD DATA LOCAL”.
+
+You should set the option:
+
+local-infile=1
+
+into your [mysql] entry of my.cnf file or call mysql client with the --local-infile option:
+
+mysql --local-infile -uroot -pyourpwd yourdbname
+
+You have to be sure that the same parameter is defined into your [mysqld] section too to enable the "local infile" feature server side.
+
+It's a security restriction.
+
+====================
+vim:ft=help
