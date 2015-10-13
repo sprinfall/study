@@ -1,14 +1,12 @@
-"-------------------------------------------------------------------------------
-"
 
-" Call a funcution only if it exists.
+" Call a function only if it exists.
 func! CallIf(funcname, arglist)
     if exists("*".a:funcname)
         return call(a:funcname, a:arglist)
     endif
 endfunc
 
-" Call a funcution only once.
+" Call a function only once.
 func! CallOnce(funcname, arglist)
     let l:flag = "g:called_".a:funcname
     if !exists("*".a:funcname) || exists(l:flag)
@@ -18,38 +16,157 @@ func! CallOnce(funcname, arglist)
     return call(a:funcname, a:arglist)
 endfunc
 
-"-------------------------------------------------------------------------------
-" encoding, font, etc.
-
-" normally 'encoding' will be equal to your current locale.
-" you can detect the locale via v:lang, e.g.,
+" Normally 'encoding' will be equal to your current locale.
+" You can detect the locale via v:lang, e.g.,
 "     if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
 " and export LANG=... in ~/.bashrc to set the locale, e.g.,
 "     export LANG=zh_CN.utf8
-" you don't have to set it.
-"set fileencodings=utf-8,ucs-bom,cp936,gbk,gb2312,big5,latin1
+" You don't have to set it.
 set fileencodings=utf-8,ucs-bom,gbk,gb2312,big5,latin1
 
 if has("gui_running")
-    " I always use Vim in console in Linux so this is only for gVim in Windows.
-    if has("gui_win32")
+    if has("gui_gtk")
+        set guifont=Droid\ Sans\ Mono\ Regular\ 14
+    elseif has("gui_macvim")
+        " TODO Verify
+        set guifont=Andale\ Mono:h13,Courier\ New:h13
+    elseif has("gui_win32")
         set guifont=DejaVu_Sans_Mono:h11:cDEFAULT,Courier_New:h11:cDEFAULT
         " Need to download 'GB18030 Support Package' from MS.com for SimSun-18030.
         " Make sure 'encoding' is "utf-8" and "guifontset" is empty or invalid. (except GTK+ 2)
         "set guifontwide=SimSun-18030,Arial_Unicode_MS
-        " Prefer console style UI.
-        set guioptions-=e " use console style tab
-        set guioptions-=T " no toolbar
-        set guioptions-=m " no menu
-    elseif has("gui_macvim")
-        set guifont=Andale\ Mono:h13,Courier\ New:h13
+
+        set guioptions-=m  " No menu
     endif
+
+    " Prefer console style UI.
+    set guioptions-=e  " Use console style tab
+    set guioptions-=T  " No toolbar
+endif
+
+if has("win32")
+    " Expand file path using / instead of \ on Windows.
+    " See expand().
+    set shellslash
 endif
 
 " for chinese
 set formatoptions+=mM
 
 "set listchars=trail:-
+
+let mapleader = ","
+let g:mapleader = ","
+
+"-------------------------------------------------------------------------------
+" Vundle
+
+filetype off
+
+if has("win32")
+    set rtp+=~/vimfiles/bundle/Vundle.vim
+else
+    set rtp+=~/.vim/bundle/Vundle.vim
+endif
+call vundle#begin()
+
+" let Vundle manage Vundle
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'godlygeek/tabular'
+Plugin 'majutsushi/tagbar'
+Plugin 'scrooloose/nerdtree'
+Plugin 'hrp/EnhancedCommentify'
+"Plugin 'msanders/snipmate.vim'
+"Plugin 'tpope/vim-fugitive'
+
+" C++
+Plugin 'vim-scripts/STL-improved'
+
+" Python
+" Static code checker and style checker for Python based on flake8.
+Plugin 'nvie/vim-flake8'
+" Auto-completion plugin for Python based on jedi
+" $ pip install jedi
+" NOTE: YouCompleteMe seems better.
+"Plugin 'davidhalter/jedi-vim'
+
+" Go
+Plugin 'fatih/vim-go'
+"Plugin 'Blackrush/vim-gocode'
+
+" HTML
+Plugin 'mattn/emmet-vim'  " Zen coding
+
+" JS
+Plugin 'wookiehangover/jshint.vim'
+
+" Complete
+Plugin 'Valloric/YouCompleteMe'
+
+call vundle#end()
+
+" Enable file type detection.
+" Use the default filetype settings. Also load indent files to automatically
+" do language-dependent indenting ('cindent' for C, C++, Java, C# files).
+filetype plugin indent on
+
+" Plugin options
+
+" tagbar
+let g:tagbar_type_go = {
+            \ 'ctagstype' : 'go',
+            \ 'kinds'     : [
+            \ 'p:package',
+            \ 'i:imports:1',
+            \ 'c:constants',
+            \ 'v:variables',
+            \ 't:types',
+            \ 'n:interfaces',
+            \ 'w:fields',
+            \ 'e:embedded',
+            \ 'm:methods',
+            \ 'r:constructor',
+            \ 'f:functions'
+            \ ],
+            \ 'sro' : '.',
+            \ 'kind2scope' : {
+            \ 't' : 'ctype',
+            \ 'n' : 'ntype'
+            \ },
+            \ 'scope2kind' : {
+            \ 'ctype' : 't',
+            \ 'ntype' : 'n'
+            \ },
+            \ 'ctagsbin'  : 'gotags',
+            \ 'ctagsargs' : '-sort -silent'
+            \ }
+
+" Vertically explore the dir of current file.
+map <F2> :Vex<CR>
+"map <F2> :NERDTreeToggle<CR>
+
+nmap <F8> :TagbarToggle<CR>
+
+" No preview!
+set completeopt=menu,menuone,longest
+
+" jedi-vim
+" Force Python version to avoid the auto-detection in jedi#init_python().
+" The auto-detection is not efficient and might not work.
+let g:jedi#force_py_version = 3
+let g:jedi#popup_on_dot = 0
+" Default <Ctrl-Space> conflicts with Chinese input method program.
+let g:jedi#completions_command = "<C-N>"
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#use_splits_not_buffers = "bottom"
+
+" go-vim
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
 
 "-------------------------------------------------------------------------------
 " general
@@ -61,33 +178,16 @@ set nobackup
 set nowritebackup
 set noswapfile
 
-set autoread " when file is changed outside
 " Persistent undo serializes to a file named '.<filename>.un~'.
 " That's a little anoying.
 if v:version >= 730
-"    set undofile " .
+    set undofile " .
 endif
-
-" Go language vim files. Set before "filetype plugin indent on".
-if $GOROOT != ""
-  set rtp+=$GOROOT/misc/vim
-endif
-
-" Enable file type detection.
-" Use the default filetype settings. Also load indent files to automatically
-" do language-dependent indenting ('cindent' for C, C++, Java, C# files).
-filetype plugin on
-filetype indent on
-
-let mapleader = ","
-let g:mapleader = ","
 
 nmap <leader>w :w!<CR>
 nmap <leader>f :find<CR>
 
-set ffs=dos,unix,mac
-nmap <leader>fd :set ff=dos<CR>
-nmap <leader>fu :set ff=unix<CR>
+set ffs=unix,mac,dos
 
 " Remove the Windows ^M
 noremap <leader>m :%s/<C-V><C-M>//ge<CR>
@@ -106,13 +206,6 @@ if has("balloon_eval")
     set ballooneval
 endif
 
-" TODO
-"inoremap <tab> <C-X><C-I>
-
-" Use / instead of \ when get path from getcwd(), expand(), etc.
-" With this option set, escape() doens't have to care about '\' in Windows.
-set shellslash
-
 "-------------------------------------------------------------------------------
 " format
 
@@ -124,21 +217,21 @@ set shellslash
 " :0: no indent for labels of switch().
 set cinoptions=t0,g0,:0
 
-" Note: After expanding tab, type "C-v tab" to get the unexpanded tab.
+" NOTE: After expand tab, type "C-v tab" to get the unexpanded tab.
 " If you have a file that already contains tabs then you can convert them to spaces by typing :retab.
 " :retab replaces a tab with &tabstop(ts) number of spaces.
+" For tabstop: default 8. better not to change it.
 func! ExpandTab(tabsize)
-"     for tabstop: default 8. better not to change it
-    exec ":set expandtab"
-    exec ":set shiftwidth=" . a:tabsize
-    exec ":set softtabstop=" . a:tabsize
+    set expandtab
+    " TODO: Why doesn't 'set sw=a:tabsize' work?
+    exec ":set sw=".a:tabsize
+    exec ":set sts=".a:tabsize
 endfunc
 
 " TODO
-call ExpandTab(4) " default
-au FileType c,cpp,vim,html,lua call ExpandTab(2)
-nnoremap <leader>t2 call ExpandTab(2)
-nnoremap <leader>t4 call ExpandTab(4)
+au FileType c,cpp,html,lua,javascript,objc call ExpandTab(2)
+au FileType vim call ExpandTab(4)
+au FileType go set ts=4 | set sw=4
 
 "set smarttab
 
@@ -149,6 +242,8 @@ set linebreak
 set nowrap " lines (nowrap)
 " colorcolumn highlights the specified column(s) but it makes redrawing slower.
 "set colorcolumn=<nr>[,<nr>]
+
+au FileType text set wrap
 
 "-------------------------------------------------------------------------------
 " color
@@ -236,7 +331,7 @@ endfunc
 
 set laststatus=2 " always show statusline
 set statusline=%<%f\ -\ %r%{CurDir()}%h\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\
-        \ \ %-16.(%l/%L,%c%V%)\ \ %P
+            \ \ %-16.(%l/%L,%c%V%)\ \ %P
 " Always set the cwd to the dir of current buffer.
 " Similar to 'Link with Editor' of Package Explorer of Eclipse.
 " TODO: This may make it difficult to generate tags/cscope_db.
@@ -253,6 +348,7 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches() " for performance
+
 " Using the list and listchars options:
 func! ListOrNot()
     if &list
@@ -260,7 +356,7 @@ func! ListOrNot()
     else
         " TODO: :dig
         set list listchars=tab:>-,trail:-,eol:$,extends:>,precedes:<
-"        set list listchars=tab:<-,trail:-,eol:$
+        "        set list listchars=tab:<-,trail:-,eol:$
     endif
 endfunc
 map <buffer> <leader>ls :call ListOrNot()<CR>
@@ -299,43 +395,14 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" vertically explore the dir of current file
-"map <F2> :Vex<CR>
-map <F2> :NERDTreeToggle<CR>
-
 "-------------------------------------------------------------------------------
 " buffer
 
-" switch buffers with arrows
+" Switch buffers with arrow keys
 map <right> :bn<CR>
 map <left>  :bp<CR>
 map <up>    :bf<CR>
 map <down>  :bl<CR>
-
-" list buffers
-map <leader>bl :ls<CR>
-" add buffer
-map <leader>ba :bad<space>
-" delete buffer (write first)
-map <leader>bd :w!<CR>:bd<CR>
-" open a buffer for temporary use (e.g. copy)
-map <leader>bt :e ~/tempbuf<CR>
-
-map <leader>O :only<CR>
-
-"-------------------------------------------------------------------------------
-" tab
-if v:version >= 700
-    map <leader>tn :tabnew %<CR>
-    map <leader>te :tabedit
-    map <leader>tc :tabclose<CR>
-    map <leader>tm :tabmove
-    try
-        set switchbuf=usetab
-        set stal=2
-    catch
-    endtry
-endif
 
 "-------------------------------------------------------------------------------
 " abbr.
@@ -418,35 +485,11 @@ endif
 "-------------------------------------------------------------------------------
 " FILE TYPES
 
-" --- VIM ---
-"au FileType vim map <buffer> <leader><space> :w!<CR>:source %<CR>
-" TODO ':source' will highlight the last search string.
-au FileType vim map <buffer> <leader><space> :source %<CR>
+autocmd FileType vim map <buffer> <leader><space> :source %<CR>
+autocmd FileType lua map <buffer> <leader><space> :!lua %<CR>
 
-" --- LUA ---
-au FileType lua map <buffer> <leader><space> :!lua %<CR>
-
-" --- PYTHON ---
-
-" On-the-fly python code checking:
-"   pyflakes: http://www.vim.org/scripts/script.php?script_id=2441
-" TODO
-au FileType python map <buffer> <leader><space> :!python %<CR>
-
-" Run in the Python interpreter.
-func! Python_Eval_VSplit() range
-   let src = tempname()
-   let dst = tempname()
-   exec ": " . a:firstline . "," . a:lastline . "w " . src
-   exec ":!python " . src . " > " . dst
-   exec ":pedit! " . dst
-endfunc
-"au FileType python vmap <F5> :call Python_Eval_VSplit()<CR>
-
-" TODO
-func! Run_python()
-    :!python %
-endfunc
+"autocmd BufWritePost *.py call Flake8()
+autocmd FileType python map <buffer> <leader><space> :!python %<CR>
 
 "-------------------------------------------------------------------------------
 " tool - ctags
@@ -547,9 +590,24 @@ func! DirUpper(dir)
     endif
 endfunc
 
+" Get the upper directory where the file 'ctags.generate' is presented.
+func! GetTagsProjDir()
+    let l:dir = expand("%:p:h")
+    while !empty(l:dir)
+        let l:genfile = l:dir."/ctags.generate"
+        if filereadable(l:genfile)
+            break
+        else
+            let l:dir = DirUpper(l:dir)
+        endif
+    endwhile
+    echo "tags proj dir: ". l:dir
+    return l:dir
+endfunc
+
 " Generate tags for the given file in the upper directory where the file
 " 'ctags.generate' is presented.
-func! GenerateTagsForFile(file)
+func! GenTagsForFile(file)
     let l:generated = 0
     let l:dir = DirUpper(a:file)
     while 1
@@ -576,12 +634,12 @@ func! GenerateTagsForFile(file)
     exec 'set tags+='.escape(l:dir, ' ').'/tags'
 endfunc
 
-func! GenerateTagsForCurrentFile()
-    return GenerateTagsForFile(expand("%:p"))
+func! GenTagsForCurrFile()
+    return GenTagsForFile(expand("%:p"))
 endfunc
 
 " Generate tags in the upper directory where the file 'ctags.generate' is presented.
-func! GenerateTagsForProj(dir)
+func! GenTagsForProj(dir)
     let l:dir = a:dir
     while 1
         if empty(l:dir)
@@ -601,181 +659,42 @@ func! GenerateTagsForProj(dir)
             exec 'set tags+='.escape(l:dir, ' ').'/tags'
             break
         else
+            echo l:dir
             let l:dir = DirUpper(l:dir)
+            echo "updir: ".l:dir
         endif
     endwhile
 endfunc
-func! GenerateTagsForCurrentProj()
-    return GenerateTagsForProj(expand("%:p:h"))
+
+func! GenTagsForCurrProj()
+    return GenTagsForProj(expand("%:p:h"))
 endfunc
 
-if filereadable($CTAGS_PATH)
-    " TODO: This is meant to add the tags in CWD.
-    if filereadable("tags")
-        set tags+=tags
+" Add tags in the upper directory where the file 'ctags.generate' is presented.
+func! AddTagsForCurrProj()
+    let l:dir = GetTagsProjDir()
+    if !empty(l:dir)
+        let l:tags_path = escape(l:dir, ' ').'/tags'
+        exec 'set tags+='.l:tags_path
+        echo "tags added: ".l:tags_path
     endif
+endfunc
 
-    " Load tags dictionary.
-    call ParseTagsFromEnvVar()
-    " Auto command to add tags by file type.
-    au BufReadPost * :call CallOnce("AddTagsForFileType", [&ft])
 
-    " Add other tags.
-    call AddTagsForAll()
-
-    map <silent> <F12> :call GenerateTagsForCurrentFile()<CR><CR>
-    map <silent> <C-F12> :call GenerateTagsForCurrentProj()<CR><CR>
+" Add the tags in CWD.
+if filereadable("tags")
+    set tags+=tags
 endif
 
-"-------------------------------------------------------------------------------
-" C/C++
+" Load tags dictionary.
+call ParseTagsFromEnvVar()
 
+" Auto command to add tags by file type.
+au BufReadPost * :call CallOnce("AddTagsForFileType", [&ft])
 
-" --- LISP, SCHEME ---
-au FileType scheme :set lisp
-au FileType scheme map <buffer> <leader><space> :!ypsilon %<CR>
+" Add other tags.
+call AddTagsForAll()
 
-"-------------------------------------------------------------------------------
-" filetype - haskell
-
-" use ghc funcality for haskell files
-au Bufenter *.hs compiler ghc
-setlocal includeexpr=substitute(v:fname,'\\.','/','g')
-let g:haddock_browser = "C:/Documents and Settings/19003883/Local Settings/Application Data/Google/Chrome/Application/chrome.exe"
-let g:haskell_home = "D:/bin/haskell-platform/2011.2.0.1/"
-let g:ghc = g:haskell_home . "bin/ghc.exe"
-let g:haddock_docdir = g:haskell_home . "doc/html/"
-let g:wget = "wget.exe"
-
-au FileType haskell call ExpandTab(2)
-"au FileType haskell let b:ghc_staticoptions = '-isrc'
-"au FileType haskell setlocal path += src
-
-func! Bld_haskell()
-    exec ":!ghc --make %"
-    "-Wall
-endfunc
-
-func! Bld()
-    return CallIf("Bld_".tolower(&filetype), [])
-endfunc
-
-func! Clr_haskell()
-    " ISSUE: Windows only...
-    return system("DEL *.hi *.o *.exe *.manifest")
-endfunc
-func! Clr()
-    return CallIf("Clr_".tolower(&filetype), [])
-endfunc
-
-func! Run_haskell()
-    exec ":!".expand("%:r")
-endfunc
-func! Run()
-    return CallIf("Run_".tolower(&filetype), [])
-endfunc
-
-command! Bld call Bld()
-command! Clr call Clr()
-command! Run call Run()
-nmap <F7> :Bld<CR>
-nmap <C-F7> :Clr<CR>
-nmap <F5> :Run<CR>
-
-"-------------------------------------------------------------------------------
-" tool - cscope
-
-func! SetCScope()
-    if !has("cscope") || !filereadable($CSCOPE_PATH)
-        return
-    endif
-
-    set csprg=$CSCOPE_PATH
-    " 0: search cscope db first; 1: search tag files first
-    set csto=0 " default
-    " search cscope db as well as the tag files
-    set cst " default: nocst
-
-    if filereadable("cscope.out")
-        " add any database in current directory
-        cs add cscope.out
-        " else add database pointed to by environment
-    elseif $CSCOPE_DB != ""
-        let l:db_items = split($CSCOPE_DB, ';')
-        for l:db_item in l:db_items
-            if filereadable(l:db_item)
-                exec "cs add ".l:db_item
-            endif
-        endfor
-    endif
-
-    " Tips for :cstag
-    " :cstag can use the tag file produced by ctags while :cs find cannot
-    " and if 'sct' is set, commands like <C-]> or :tag will use :cstag instead
-    " of the default :tag behavior
-    " so no extra mapping is provided here for :cstag. use <C-]> directly
-
-    nmap <leader>S :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader>G :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader>C :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader>T :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader>E :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader>F :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <leader>I :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <leader>D :cs find d <C-R>=expand("<cword>")<CR><CR>
-
-    " Horizontally split window.
-    nmap <leader><leader>S :scs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader><leader>G :scs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader><leader>C :scs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader><leader>T :scs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader><leader>E :scs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <leader><leader>F :scs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <leader><leader>I :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <leader><leader>D :scs find d <C-R>=expand("<cword>")<CR><CR>
-
-    " Vertically split doesn't make much sense.
-
-    " Update and add the cscope db.
-    map <silent> <F11> :w<CR>:!cscope -Rbk *.h *.hpp *.cpp *.cc *.cxx *.C<CR>:cs add cscope.out<CR>
-endfunc
-" Use FileType since cscope is designed for C/C++.
-au FileType c,cpp call CallOnce("SetCScope", [])
-
-"-------------------------------------------------------------------------------
-" PLUGIN - taglist
-
-map <F8> :TlistToggle<CR>
-let Tlist_Enable_Fold_Column = 1
-let Tlist_File_Fold_Auto_Close = 1
-let Tlist_Close_On_Select = 1
-let Tlist_Show_Menu = 1
-let Tlist_Sort_Type = "name"
-
-"-------------------------------------------------------------------------------
-" OMNI
-
-set completeopt="menu" " no preview window.
-
-" PLUGIN - OmniCppComplete
-" TODO: Need to set 'path'.
-"let OmniCpp_DefaultNamespaces = ["std", "boost"]
-"let OmniCpp_NamespaceSearch = 2 " search in included files too.
-let OmniCpp_ShowPrototypeInAbbr = 1 " display prototype in abbreviation.
-let OmniCpp_SelectFirstItem = 2 " select first item without inserting.
-
-"-------------------------------------------------------------------------------
-" PLUGIN - matrix screensaver
-"nmap <silent> <C-M> :Matrix<CR>
-
-"-------------------------------------------------------------------------------
-" PLUGIN - EnhancedCommentify
-let g:EnhCommentifyMultiPartBlocks = 'yes'
-
-" VIMIM
-":let g:vimim_sexy_input_style=0
-
-
-" SCons
-au BufNewFile,BufRead SConstruct :set ft=python
+map <silent> <F12> :call GenTagsForCurrProj()<CR><CR>
+map <silent> <F11> :call AddTagsForCurrProj()<CR><CR>
 
