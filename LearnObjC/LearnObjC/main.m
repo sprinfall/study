@@ -2,9 +2,6 @@
 //  main.m
 //  LearnObjC
 //
-//  Created by csi on 16/3/28.
-//  Copyright (c) 2016年 Adam Gu. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 
@@ -15,47 +12,44 @@ void testNSArray_Create() {
 
   // arrayWithObject
   {
-    NSArray *someArray = [NSArray arrayWithObject:@"string0"];
-    NSUInteger count = [someArray count];
-    assert(count == 1);
+    NSArray *array = [NSArray arrayWithObject:@"string0"];
+    assert(array.count == 1);
   }
 
   // arrayWithObjects
   {
-    NSArray *someArray = [NSArray arrayWithObjects:@"string0", @"string1", @"string2", nil];
-    NSUInteger count = [someArray count];
-    assert(count == 3);
+    NSArray *array = [NSArray arrayWithObjects:@"string0", @"string1", @"string2", nil];
+    assert(array.count == 3);
   }
 
   // alloc ] init
   {
-    NSArray *someArray = [[NSArray alloc] init];
-    assert([someArray count] == 0);
+    NSArray *array = [[NSArray alloc] init];
+    assert(array.count == 0);
   }
 
   // new
   {
-    NSArray *someArray = [NSArray new];
-    assert([someArray count] == 0);
+    NSArray *array = [NSArray new];
+    assert(array.count == 0);
   }
 
   // initWithObjects (end with nil)
   {
-    NSArray *someArray = [[NSArray alloc] initWithObjects:@"string0", @"string1", @"string2", nil];
-    NSUInteger count = [someArray count];
-    assert(count == 3);
+    NSArray *array = [[NSArray alloc] initWithObjects:@"string0", @"string1", @"string2", nil];
+    assert(array.count == 3);
   }
 
   // Literal syntax
   {
-    NSArray *someArray = @[ @"string0", @"string1", @"string2" ];
-    assert([someArray count] == 3);
+    NSArray *array = @[ @"string0", @"string1", @"string2" ];
+    assert([array count] == 3);
   }
 
   // Literal syntax - empty list
   {
-    NSArray *someArray = @[];
-    assert([someArray count] == 0);
+    NSArray *array = @[];
+    assert([array count] == 0);
   }
 
   // initWithArray:copyItems:
@@ -64,42 +58,42 @@ void testNSArray_Create() {
     NSMutableString *str1 = [NSMutableString stringWithString:@"string1"];
     NSMutableString *str2 = [NSMutableString stringWithString:@"string2"];
 
-    NSArray *someArray = @[ str0, str1, str2 ];
-    NSArray *someOtherArray = [[NSArray alloc] initWithArray:someArray];
-    NSArray *someOtherCopiedArray = [[NSArray alloc] initWithArray:someArray copyItems:YES];
+    NSArray *array = @[ str0, str1, str2 ];
+    NSArray *otherArray = [[NSArray alloc] initWithArray:array];
+    NSArray *otherCopiedArray = [[NSArray alloc] initWithArray:array copyItems:YES];
 
     [str0 setString:@""];
 
-    assert([someArray[0] length] == 0);
-    assert([someOtherArray[0] length] == 0);
-    assert([someOtherCopiedArray[0] isEqualToString:@"string0"]);
+    assert([array[0] length] == 0);
+    assert([otherArray[0] length] == 0);
+    assert([otherCopiedArray[0] isEqualToString:@"string0"]);
   }
 
-}
+}  // testNSArray_Create
 
 
 void testNSArray_Query() {
 
   {
-    NSArray *someArray = @[ @"string0", @"string1", @"string2" ];
+    NSArray *array = @[ @"string0", @"string1", @"string2" ];
 
-    assert([[someArray objectAtIndex:0] isEqualToString:@"string0"]);
-    assert([someArray[0] isEqualToString:@"string0"]);
+    assert([[array objectAtIndex:0] isEqualToString:@"string0"]);
+    assert([array[0] isEqualToString:@"string0"]);
 
-    BOOL contains = [someArray containsObject:@"string0"];
+    BOOL contains = [array containsObject:@"string0"];
     assert(contains == YES);
 
-    contains = [someArray containsObject:someArray[0]];
+    contains = [array containsObject:array[0]];
     assert(contains == YES);
 
-    NSUInteger index = [someArray indexOfObject:@"string0"];
+    NSUInteger index = [array indexOfObject:@"string0"];
     assert(index == 0);
 
-    index = [someArray indexOfObject:someArray[0]];
+    index = [array indexOfObject:array[0]];
     assert(index == 0);
   }
 
-}
+}  // testNSArray_Query
 
 
 void testNSArray_Sort() {
@@ -155,6 +149,146 @@ void testNSArray_Sort() {
       NSLog(@"Case insensitively sorted strings: %@", sortedStrings);
   }
 
+}  // testNSArray_Sort
+
+void testNSArray_Enumeration() {
+  NSArray *array = @[ @1, @2, @3, @4, @5 ];
+
+  // Use objectAtIndex (via subscripting)
+  {
+    for (NSUInteger i = 0; i < array.count; i++) {
+      // id obj = array[i];
+      // id obj = [array objectAtIndex:i];
+    }
+  }
+
+  // Use enumerator (old school)
+  {
+    NSMutableArray *mutableArray = [NSMutableArray array];
+    NSEnumerator *enumerator = [array objectEnumerator];
+    id obj = nil;
+    while ((obj = [enumerator nextObject]) != nil) {
+      // ...
+    }
+  }
+
+  // Classic enumeration (for each)
+  {
+    NSMutableArray *mutableArray = [NSMutableArray array];
+    for (id obj in array) {
+      // ...
+    }
+  }
+
+}  // testNSArray_Enumeration
+
+
+// Return YES if the object is a number > 0.
+static
+BOOL filterObject(id obj) {
+  if ([obj isKindOfClass:NSNumber.class]) {
+    NSNumber *number = (NSNumber *)obj;
+    if ([number integerValue] > 0) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
+void testNSArray_Filtering() {
+
+  NSArray *array = @[ @1, @2, @3, @4, @5, @-6, @-7, @-8, @-9 ];
+
+  // Use predicates (block-based)
+  {
+    NSArray *filteredArray = [array filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *bindings) {
+      return filterObject(obj);
+    }]];
+    NSLog(@"Filtered array: %@", filteredArray);  // 1, 2, 3, 4, 5
+  }
+
+  // Use indexesOfObjectsWithOptions:passingTest:
+  {
+    NSIndexSet *indexes = [array indexesOfObjectsWithOptions:NSEnumerationConcurrent
+                                                     passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return filterObject(obj);
+    }];
+    NSArray *filteredArray = [array objectsAtIndexes:indexes];
+    NSLog(@"Filtered array: %@", filteredArray);  // 1, 2, 3, 4, 5
+  }
+
+  // Block-based enumeration
+  {
+    NSMutableArray *filteredArray = [NSMutableArray array];
+    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if (filterObject(obj)) {
+        [filteredArray addObject:obj];
+      }
+    }];
+  }
+
+}  // testNSArray_Filtering
+
+
+// NSArray has come with built-in binary search since iOS 4 / Snow Leopard:
+//
+// typedef NS_OPTIONS(NSUInteger, NSBinarySearchingOptions) {
+//   NSBinarySearchingFirstEqual     = (1UL << 8),
+//   NSBinarySearchingLastEqual      = (1UL << 9),
+//   NSBinarySearchingInsertionIndex = (1UL << 10),
+// };
+//
+// - (NSUInteger)indexOfObject:(id)obj
+//               inSortedRange:(NSRange)r
+//                     options:(NSBinarySearchingOptions)opts
+//             usingComparator:(NSComparator)cmp;
+//
+void testNSArray_BinarySearch() {
+
+  // First Equal
+  {
+    NSArray *sortedArray = @[ @1, @2, @3, @3, @4, @5 ];
+    NSRange searchRange = NSMakeRange(0, [sortedArray count]);
+
+    NSUInteger index = [sortedArray indexOfObject:@3
+                                    inSortedRange:searchRange
+                                          options:NSBinarySearchingFirstEqual
+                                  usingComparator:^NSComparisonResult(id obj1, id obj2) {
+                                    return [obj1 compare:obj2];
+                                  }];
+    assert(index == 2);
+  }
+
+  // Last Equal
+  {
+    NSArray *sortedArray = @[ @1, @2, @3, @3, @4, @5 ];
+    NSRange searchRange = NSMakeRange(0, [sortedArray count]);
+
+    NSUInteger index = [sortedArray indexOfObject:@3
+                                    inSortedRange:searchRange
+                                          options:NSBinarySearchingLastEqual
+                                  usingComparator:^NSComparisonResult(id obj1, id obj2) {
+                                    return [obj1 compare:obj2];
+                                  }];
+    assert(index == 3);
+  }
+
+  // Insertion Index
+  {
+    NSMutableArray *sortedArray = [NSMutableArray arrayWithArray:@[ @1, @2, @3, @3, @4, @5 ]];
+    NSRange searchRange = NSMakeRange(0, [sortedArray count]);
+
+    NSUInteger index = [sortedArray indexOfObject:@0
+                                    inSortedRange:searchRange
+                                          options:NSBinarySearchingFirstEqual|NSBinarySearchingInsertionIndex
+                                  usingComparator:^NSComparisonResult(id obj1, id obj2) {
+                                    return [obj1 compare:obj2];
+                                  }];
+    assert(index == 0);
+
+    [sortedArray insertObject:@0 atIndex:index];
+    //NSLog(@"Sorted array after insertion: %@", sortedArray);
+  }
 }
 
 
@@ -162,9 +296,12 @@ int main(int argc, const char * argv[]) {
   @autoreleasepool {
     NSLog(@"Hello, World!");
 
-    testNSArray_Create();
-    testNSArray_Query();
-    testNSArray_Sort();
+//    testNSArray_Create();
+//    testNSArray_Query();
+//    testNSArray_Sort();
+//    testNSArray_Enumeration();
+//    testNSArray_Filtering();
+    testNSArray_BinarySearch();
   }
 
   return 0;
