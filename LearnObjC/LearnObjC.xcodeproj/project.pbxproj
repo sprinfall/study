@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6043E1101CA91B10007B1C37 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043E10F1CA91B10007B1C37 /* main.m */; };
+		66E4664E1CAFD67F006DFFD8 /* TestNSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E4664D1CAFD67F006DFFD8 /* TestNSArray.m */; };
+		66E466521CAFD761006DFFD8 /* TestNSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E466511CAFD761006DFFD8 /* TestNSDictionary.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,10 @@
 /* Begin PBXFileReference section */
 		6043E10C1CA91B10007B1C37 /* LearnObjC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LearnObjC; sourceTree = BUILT_PRODUCTS_DIR; };
 		6043E10F1CA91B10007B1C37 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		66E4664D1CAFD67F006DFFD8 /* TestNSArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestNSArray.m; sourceTree = "<group>"; };
+		66E4664F1CAFD6CF006DFFD8 /* TestNSArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestNSArray.h; sourceTree = "<group>"; };
+		66E466501CAFD752006DFFD8 /* TestNSDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestNSDictionary.h; sourceTree = "<group>"; };
+		66E466511CAFD761006DFFD8 /* TestNSDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestNSDictionary.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +64,10 @@
 			isa = PBXGroup;
 			children = (
 				6043E10F1CA91B10007B1C37 /* main.m */,
+				66E4664D1CAFD67F006DFFD8 /* TestNSArray.m */,
+				66E4664F1CAFD6CF006DFFD8 /* TestNSArray.h */,
+				66E466501CAFD752006DFFD8 /* TestNSDictionary.h */,
+				66E466511CAFD761006DFFD8 /* TestNSDictionary.m */,
 			);
 			path = LearnObjC;
 			sourceTree = "<group>";
@@ -118,6 +128,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66E466521CAFD761006DFFD8 /* TestNSDictionary.m in Sources */,
+				66E4664E1CAFD67F006DFFD8 /* TestNSArray.m in Sources */,
 				6043E1101CA91B10007B1C37 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,6 +247,7 @@
 				6043E1151CA91B10007B1C37 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
